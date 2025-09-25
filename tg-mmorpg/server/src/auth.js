@@ -1,9 +1,7 @@
 import jwt from 'jsonwebtoken'
-
 export function signUser(userId, secret){
   return jwt.sign({ uid: userId }, secret, { expiresIn: '7d' })
 }
-
 export function auth(secret){
   return (req,res,next)=>{
     const h = req.headers.authorization || ''

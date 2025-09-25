@@ -1,28 +1,28 @@
 export const db = {
   users: new Map(),
   characters: new Map(),
-  guilds: new Map(),
-  guildMembers: new Map(), // `${guildId}:${userId}` -> role
-  listings: new Map(),
-  world: { boss: null, bossDamage: new Map() },
-  stages: []
+  items: new Map(),
+  battles: new Map(),
+  raids: new Map(), // active raids by code
+  stages: [],
+  leaderboard: new Map(), // uid -> { level, wins, dmg }
 }
-let seq = { user: 1, char: 1, guild: 1, list: 1, battle: 1 }
+let seq = { user: 1, char: 1, item: 1, battle: 1 }
 export const nextId = (key) => seq[key]++
 
 export function seedContent(){
   const s = []
   let sid = 1
   s.push({ id: 1, name: 'Лес Эх Грин', biome: 'forest', stages:[
-    { id: sid++, difficulty: 1, energy_cost: 5 },
-    { id: sid++, difficulty: 2, energy_cost: 8 },
-    { id: sid++, difficulty: 3, energy_cost: 11 }
+    { id: sid++, name:'Полянка', difficulty: 1, energy_cost: 5 },
+    { id: sid++, name:'Тропинка', difficulty: 2, energy_cost: 8 }
   ]})
   s.push({ id: 2, name: 'Пепельные Пещеры', biome: 'cave', stages:[
-    { id: sid++, difficulty: 2, energy_cost: 8 },
-    { id: sid++, difficulty: 3, energy_cost: 12 },
-    { id: sid++, difficulty: 4, energy_cost: 15 }
+    { id: sid++, name:'Гроты', difficulty: 3, energy_cost: 12 },
+    { id: sid++, name:'Логово', difficulty: 4, energy_cost: 15 }
   ]})
   db.stages = s
+  // One default raid
+  db.raids.set('ancient_treant', { code:'ancient_treant', name:'Древний Треант', max_hp: 200000, hp: 200000, contributions: new Map() })
 }
 seedContent()
