@@ -1,1 +1,18 @@
-{ "name":"tg-mmorpg-bot", "type":"module", "scripts": { "dev":"node --watch src/bot.js" }, "dependencies": { "node-telegram-bot-api":"^0.66.0", "dotenv":"^16.4.5" } }
+
+{
+  "name": "shards-bot",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "grammy": "^1.26.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "@types/node": "^20.11.30",
+    "dotenv": "^16.4.5"
+  }
+}
