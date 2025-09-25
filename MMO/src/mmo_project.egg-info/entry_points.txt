@@ -1,2 +1,0 @@
-[console_scripts]
-mmo_project = mmo_project.main:main
