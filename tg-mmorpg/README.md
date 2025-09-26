@@ -1,64 +1,44 @@
 
-# Shards — Telegram Mini MMORPG (MVP)
+# Shards — Ligmar Feature Pack (FIXED, DEV SQLite)
 
-Локальный запуск по шагам:
+Готовый набор с фичами (гильдии, арена, контракты, крафт, рынок, босс, путешествия) и **синхронизированными** файлами:
+- Исправлены ошибки TS (методы сервиса существуют и совпадают с контроллером).
+- `Item.stats` — `String` для SQLite (JSON сериализуем вручную).
+- `BigInt` сериализуется в JSON (патч в `main.ts`).
+- Захват `?ref=` в middleware.
 
-## Предусловия
-- Node.js 20+ и pnpm (`npm i -g pnpm`) или npm/yarn
-- Docker Desktop (или docker + docker-compose)
-- Git
-- (Опционально) ngrok или cloudflared для https‑туннеля
-
-## 1) Создать бота в Telegram
-В @BotFather → `/newbot` → получите **BOT_TOKEN**.
-
-## 2) Настроить .env
-Заполните файлы:
-- `server/.env`
-- `bot/.env`
-- `web/.env`
-
-## 3) Поднять БД и Redis
+## Запуск
 ```bash
-docker compose up -d
-```
-
-## 4) Установить зависимости и миграции
-```bash
-# API
+# 1) API
 cd server
-pnpm i
-pnpm prisma generate
-pnpm prisma migrate dev --name init
+npm i
+npx prisma generate --schema=prisma/schema.prisma
+npx prisma db push --force-reset --schema=prisma/schema.prisma
+npm run dev   # http://localhost:10000
 
-# Web
+# 2) Web (простая панель для проверки)
 cd ../web
-pnpm i
-
-# Bot
-cd ../bot
-pnpm i
+npm i
+npm run dev   # http://localhost:5173
 ```
+В DEV `DEV_MODE=1` — подпись Telegram отключена. Для реального Mini App: `DEV_MODE=0` и HTTPS‑туннель на порт 5173.
 
-## 5) Запустить dev‑серверы
-```bash
-# API
-cd server
-pnpm dev  # http://localhost:8080
-
-# Web
-cd web
-pnpm dev  # http://localhost:5173
-
-# Bot
-cd bot
-pnpm dev  # long polling
-```
-
-## 6) Debug без Telegram
-Откройте http://localhost:5173 — сервер примет DEV пользователя, если включён `DEV_MODE=1` в `server/.env`.
-
-## 7) Полный прогон в Telegram
-Поднимите ngrok для портов 5173 и 8080, пропишите https URL в `.env` и нажмите «Играть» в боте.
-
-Траблшутинг и детали см. в разделе «Локальный запуск» в канвасе.
+## Эндпоинты
+- `GET  /api/me`
+- `POST /api/fight/start`  { enemy: "slime" }
+- `POST /api/daily/claim`
+- `POST /api/quest/contract/new`
+- `POST /api/quest/contract/progress` { questId, amount }
+- `POST /api/quest/contract/claim`    { questId }
+- `POST /api/guild/create`  { name, tag }
+- `POST /api/guild/join`    { guildId }
+- `POST /api/guild/leave`
+- `POST /api/arena/queue`
+- `GET  /api/market/listings`
+- `POST /api/market/list`   { itemId, price }
+- `POST /api/market/buy`    { listingId }
+- `POST /api/craft/mine`
+- `POST /api/craft/craft`   { recipe: "iron_sword" }
+- `POST /api/travel`        { location: "Forest" }
+- `GET  /api/worldboss/status`
+- `POST /api/worldboss/fight`

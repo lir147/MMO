@@ -17,10 +17,8 @@ bot.command('start', ctx => {
   return ctx.reply('Добро пожаловать в Shards! Открывай игру:', { reply_markup: kb });
 });
 
-bot.command('profile', async ctx => {
-  return ctx.reply('Открой мини‑приложение, чтобы посмотреть профиль.');
-});
+bot.command('daily', async ctx => ctx.reply('Ежедневная награда в мини‑приложении кнопкой «Daily».'));
+bot.command('profile', async ctx => ctx.reply('Профиль и инвентарь в мини‑приложении.'));
 
 bot.catch(err => console.error(err));
-
 bot.start({ drop_pending_updates: true });

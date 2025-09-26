@@ -1,28 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
 
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────── Users & Characters ───────────
 
 model User {
-  id         BigInt   @id @default(autoincrement())
-  tg_id      BigInt   @unique
-  username   String?
-  created_at DateTime @default(now())
-  characters Character[]
+  id           Int         @id @default(autoincrement())
+  tg_id        BigInt      @unique
+  username     String?
+  created_at   DateTime    @default(now())
+  referralCode String      @unique
+  referredBy   String?
+  characters   Character[]
 }
 
 model Character {
-  id      BigInt  @id @default(autoincrement())
-  user_id BigInt
-  class   String
-  level   Int     @default(1)
-  exp     BigInt  @default(0)
-  str     Int     @default(5)
-  agi     Int     @default(5)
-  int     Int     @default(5)
-  vit     Int     @default(5)
-  stamina Int     @default(20)
-  gold    BigInt  @default(0)
-  shards  BigInt  @default(0)
+  id          Int     @id @default(autoincrement())
+  user_id     Int
+  name        String? @unique
+  class       String
+  gender      String?
+  initialized Boolean @default(false)
 
-  user User @relation(fields: [user_id], references: [id])
+  level Int    @default(1)
+  exp   BigInt @default(0)
+  str   Int    @default(5)
+  agi   Int    @default(5)
+  int   Int    @default(5)
+  vit   Int    @default(5)
+  dex   Int    @default(0)
+  luck  Int    @default(0)
+
+  availableAttrPoints  Int @default(0)
+  availableSkillPoints Int @default(0)
+
+  stamina     Int       @default(20)
+  energy      Int       @default(100)
+  gold        BigInt    @default(0)
+  shards      BigInt    @default(0)
+  rating      Int       @default(1000)
+  location    String    @default("Town")
+  lastDailyAt DateTime?
+  lastMineAt  DateTime?
+  lastRestAt  DateTime?
+
+  guild_id Int?
+  user     User @relation(fields: [user_id], references: [id])
+
+  guild Guild? @relation("GuildCharacters", fields: [guild_id], references: [id])
+
+  memberships GuildMember[] @relation("CharacterGuildMemberships")
+
+  inventory Inventory[]
+  quests    Quest[]
+  skills    CharacterSkill[]
+
+  @@index([user_id])
+  @@index([guild_id])
+}
+
+// ─────────── Items & Craft ───────────
+
+model ItemSet {
+  code    String @id
+  name    String
+  bonuses String
+  items   Item[]
+}
+
+model Item {
+  id       Int      @id @default(autoincrement())
+  code     String   @unique
+  name     String
+  type     String   @default("misc")
+  slot     String?
+  rarity   String
+  min_lvl  Int      @default(1)
+  power    Int      @default(0)
+  stats    String
+  set_code String?
+  set      ItemSet? @relation(fields: [set_code], references: [code])
+
+  inv Inventory[]
+}
+
+model Inventory {
+  id         Int      @id @default(autoincrement())
+  char_id    Int
+  item_id    Int
+  equipped   Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  character Character @relation(fields: [char_id], references: [id])
+  item      Item      @relation(fields: [item_id], references: [id])
+
+  @@index([char_id])
+  @@index([item_id])
+}
+
+model Recipe {
+  id               Int    @id @default(autoincrement())
+  code             String @unique
+  result_item_code String
+  req              String
+}
+
+// ─────────── Quests ───────────
+
+model Quest {
+  id         Int      @id @default(autoincrement())
+  char_id    Int
+  type       String
+  target     String
+  amount     Int      @default(1)
+  progress   Int      @default(0)
+  rewardXp   Int      @default(0)
+  rewardGold Int      @default(0)
+  status     String   @default("active")
+  created_at DateTime @default(now())
+
+  character Character @relation(fields: [char_id], references: [id])
+
+  @@index([char_id])
+}
+
+// ─────────── Guilds ───────────
+
+model Guild {
+  id         Int           @id @default(autoincrement())
+  name       String
+  tag        String        @unique
+  created_at DateTime      @default(now())
+  leader_id  Int
+  members    GuildMember[]
+  characters Character[] @relation("GuildCharacters")
+}
+
+model GuildMember {
+  id         Int      @id @default(autoincrement())
+  guild_id   Int
+  char_id    Int
+  role       String   @default("member")
+  created_at DateTime @default(now())
+
+  guild     Guild     @relation(fields: [guild_id], references: [id])
+  character Character @relation("CharacterGuildMemberships", fields: [char_id], references: [id])
+
+  @@index([guild_id])
+  @@index([char_id])
+}
+
+// ─────────── Skills ───────────
+
+model Skill {
+  code        String  @id
+  name        String
+  description String
+  cls         String?
+  req         String
+  maxLevel    Int     @default(5)
+
+  characters CharacterSkill[]
+}
+
+model CharacterSkill {
+  id         Int    @id @default(autoincrement())
+  char_id    Int
+  skill_code String
+  level      Int    @default(0)
+
+  character Character @relation(fields: [char_id], references: [id])
+  skill     Skill     @relation(fields: [skill_code], references: [code])
+
+  @@unique([char_id, skill_code])
+  @@index([char_id])
 }

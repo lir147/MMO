@@ -5,7 +5,6 @@ import { createHmac } from 'crypto';
 function getSecret(botToken: string) {
   return createHmac('sha256', 'WebAppData').update(botToken).digest();
 }
-
 function validateInitData(initData: URLSearchParams, botToken: string) {
   const hash = initData.get('hash');
   const entries = Array.from(initData.entries())
@@ -21,6 +20,8 @@ function validateInitData(initData: URLSearchParams, botToken: string) {
 @Injectable()
 export class TelegramAuthMiddleware implements NestMiddleware {
   use(req: any, _res: any, next: () => void) {
+    if (req.query && req.query.ref) req._ref = String(req.query.ref);
+
     if (process.env.DEV_MODE === '1') {
       req.user = { tg_id: 999999, username: 'dev' };
       return next();
