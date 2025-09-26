@@ -1,1 +1,0 @@
-{ "name":"tg-mmorpg-bot", "type":"module", "scripts": { "dev":"node --watch src/bot.js" }, "dependencies": { "node-telegram-bot-api":"^0.66.0", "dotenv":"^16.4.5" } }
