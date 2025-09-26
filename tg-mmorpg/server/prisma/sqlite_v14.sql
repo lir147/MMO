@@ -1,0 +1,38 @@
+-- server/prisma/sqlite_v14.sql
+-- Direct SQL for SQLite (alternative to Prisma migrate)
+
+CREATE TABLE IF NOT EXISTS Auction (
+  id TEXT PRIMARY KEY,
+  itemCode TEXT NOT NULL,
+  minBid INTEGER NOT NULL,
+  topBid INTEGER NOT NULL DEFAULT 0,
+  topBidderCharId INTEGER,
+  sellerCharId INTEGER NOT NULL,
+  endsAt DATETIME NOT NULL,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS WorldBoss (
+  id TEXT PRIMARY KEY,
+  code TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  maxHp INTEGER NOT NULL,
+  hp INTEGER NOT NULL,
+  atk INTEGER NOT NULL,
+  rewardXp INTEGER NOT NULL,
+  rewardGold INTEGER NOT NULL,
+  resists TEXT,
+  alive INTEGER NOT NULL DEFAULT 1,
+  nextSpawnAt DATETIME
+);
+
+CREATE TABLE IF NOT EXISTS WorldBossHitLog (
+  id TEXT PRIMARY KEY,
+  bossId TEXT NOT NULL,
+  char_id INTEGER NOT NULL,
+  dmg INTEGER NOT NULL,
+  createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Extend Guild with treasury if missing
+ALTER TABLE Guild ADD COLUMN treasury INTEGER DEFAULT 0;

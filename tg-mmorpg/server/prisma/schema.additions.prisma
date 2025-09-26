@@ -1,0 +1,39 @@
+// server/prisma/schema.additions.prisma
+// Append this to your existing prisma/schema.prisma
+
+model Auction {
+  id               String   @id @default(cuid())
+  itemCode         String
+  minBid           Int
+  topBid           Int      @default(0)
+  topBidderCharId  Int?
+  sellerCharId     Int
+  endsAt           DateTime
+  createdAt        DateTime @default(now())
+}
+
+model WorldBoss {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  name       String
+  maxHp      Int
+  hp         Int
+  atk        Int
+  rewardXp   Int
+  rewardGold Int
+  resists    String?  // JSON string
+  alive      Boolean  @default(true)
+  nextSpawnAt DateTime?
+  updatedAt  DateTime @updatedAt
+}
+
+model WorldBossHitLog {
+  id      String   @id @default(cuid())
+  bossId  String
+  char_id Int
+  dmg     Int
+  createdAt DateTime @default(now())
+}
+
+// In your existing Guild model add:
+/// treasury Int @default(0)

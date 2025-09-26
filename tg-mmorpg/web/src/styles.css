@@ -1,0 +1,13 @@
+
+@tailwind base; @tailwind components; @tailwind utilities;
+:root { color-scheme: dark; }
+html, body, #root { height:100%; background: radial-gradient(80% 60% at 50% 0%, rgba(58,113,255,.15) 0%, rgba(14,20,34,0) 50%), theme('colors.bg'); }
+.card { @apply bg-panel/90 backdrop-blur rounded-2xl shadow-soft border border-white/5; }
+.btn { @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 active:bg-white/20 transition; }
+.btn-primary { @apply bg-accent/20 hover:bg-accent/30 text-accent font-semibold; }
+.stat { @apply px-3 py-1 rounded-lg bg-white/5 border border-white/5 text-sm; }
+.badge { @apply inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white/10 text-xs uppercase tracking-wide; }
+.progress { @apply h-2 w-full rounded-full bg-white/10 overflow-hidden; }
+.progress > span { @apply block h-full rounded-full bg-accent; }
+.rarity-C { @apply text-gray-300; } .rarity-B { @apply text-blue-300; } .rarity-A { @apply text-purple-300; } .rarity-S { @apply text-amber-300; }
+@media (max-width: 480px){ .hud { @apply grid grid-cols-2 gap-2; } .hud .xp { grid-column: span 2 / span 2; } }
